@@ -1,0 +1,437 @@
+<html class="dark">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        // Init theme early to prevent flash
+        if (localStorage.getItem('weather_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .weather-gradient {
+            background: linear-gradient(180deg, #1e293b 0%, #101922 100%);
+        }
+    </style>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white/50 dark:bg-background-dark/50 hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-primary flex items-center gap-2 mb-10">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+                WeatherWeb
+            </h1>
+            <nav class="flex flex-col gap-2">
+                <a href="index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+                    Home
+                </a>
+                <a href="forecast.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    Forecast
+                </a>
+                <button id="themeToggleBtn"
+                    class="flex items-center gap-4 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors text-left cursor-pointer">
+                    <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+                    <span id="themeText">Light Mode</span>
+                </button>
+                <a href="about.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined">info</span>
+                    About Us
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto w-full">
+        <!-- Web Header -->
+        <header
+            class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+            <!-- Mobile Logo -->
+            <h1 class="md:hidden text-2xl font-bold text-primary flex items-center gap-2">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+            </h1>
+
+            <!-- Search Bar -->
+            <div class="flex items-center gap-4 flex-1 w-full max-w-2xl mx-auto order-3 md:order-none">
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <div class="relative flex-1 group">
+                        <div
+                            class="flex items-center bg-slate-100 dark:bg-slate-800 rounded-2xl px-4 py-3 transition-all duration-300 focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-white dark:focus-within:bg-slate-900 shadow-sm group-hover:shadow-md border border-transparent focus-within:border-primary/30 h-full">
+                            <span
+                                class="material-symbols-outlined text-slate-400 group-focus-within:text-primary">search</span>
+                            <input type="text" id="searchInput" placeholder="Search for a city..."
+                                class="bg-transparent border-none focus:ring-0 text-slate-700 dark:text-slate-200 w-full px-3 placeholder:text-slate-400">
+                            <span id="locationBtn"
+                                class="material-symbols-outlined text-slate-400 hover:text-primary cursor-pointer transition-colors sm:hidden">my_location</span>
+                        </div>
+                        <div id="searchResults"
+                            class="search-results-container absolute top-[calc(100%+8px)] left-0 right-0 bg-white dark:bg-slate-800 rounded-xl shadow-lg hidden z-[100] max-h-64 overflow-y-auto w-full border border-slate-100 dark:border-slate-700">
+                        </div>
+                    </div>
+                    <button id="locationBtnFull"
+                        class="hidden sm:flex items-center gap-2 bg-primary/10 hover:bg-primary/20 transition-all duration-300 px-6 py-3 rounded-2xl text-primary font-bold whitespace-nowrap shadow-sm hover:shadow-md group">
+                        <span
+                            class="material-symbols-outlined group-hover:rotate-45 transition-transform">location_on</span>
+                        Use My Location
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Menu -->
+            <div class="md:hidden flex items-center order-2">
+                <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 cursor-pointer text-3xl">menu</span>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-8">
+                <div id="weatherMainCard"
+                    class="weather-gradient rounded-3xl p-8 shadow-xl flex flex-col md:flex-row items-center md:items-start justify-between min-h-[300px]">
+                    <div class="text-center md:text-left flex flex-col h-full justify-between w-full md:w-auto">
+                        <div>
+                            <h2 id="cityName" class="text-4xl md:text-5xl font-bold mb-2 text-white">
+                                Loading...</h2>
+                            <p id="currentDate" class="text-slate-300 text-lg mb-6 flex-1">...</p>
+                        </div>
+                        <div
+                            class="text-[100px] md:text-[120px] font-bold leading-none relative inline-block text-white mt-auto">
+                            <span id="currentTemp">--</span><span
+                                class="text-[40px] md:text-[50px] absolute top-4 -right-12 md:-right-16 font-light">°C</span>
+                        </div>
+                    </div>
+                    <div class="flex flex-col items-center justify-center mt-8 md:mt-0 h-full w-full md:w-auto">
+                        <span id="weatherIcon"
+                            class="material-symbols-outlined text-[120px] md:text-[160px] text-primary drop-shadow-lg"
+                            style="font-variation-settings: 'FILL' 1">cloud</span>
+                        <p id="weatherDesc" class="text-2xl font-medium mt-4 text-white">Loading...</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
+                    <div
+                        class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 flex flex-col items-center shadow-sm hover:-translate-y-1 transition-transform">
+                        <span class="material-symbols-outlined text-primary mb-3 text-3xl">humidity_percentage</span>
+                        <span
+                            class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Humidity</span>
+                        <span id="currentHumidity"
+                            class="text-2xl font-bold mt-2 text-slate-800 dark:text-slate-100">--%</span>
+                    </div>
+                    <div
+                        class="bg-white dark:bg-slate-800/80 rounded-2xl p-6 flex flex-col items-center shadow-sm hover:-translate-y-1 transition-transform">
+                        <span class="material-symbols-outlined text-primary mb-3 text-3xl">air</span>
+                        <span
+                            class="text-slate-500 dark:text-slate-400 text-sm font-medium uppercase tracking-wider">Wind
+                            Speed</span>
+                        <span id="currentWind" class="text-2xl font-bold mt-2 text-slate-800 dark:text-slate-100">--
+                            km/h</span>
+                    </div>
+                    <!-- 5-Day Forecast link block -->
+                    <div onclick="window.location.href='forecast.html'"
+                        class="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800/80 rounded-2xl p-6 flex flex-col items-center shadow-sm cursor-pointer hover:shadow-md hover:-translate-y-1 transition-all md:col-span-1 col-span-2 group">
+                        <span
+                            class="material-symbols-outlined text-primary mb-3 text-3xl group-hover:scale-110 transition-transform"
+                            style="font-variation-settings: 'FILL' 1">calendar_month</span>
+                        <span class="text-slate-700 dark:text-slate-200 font-bold text-lg">5-Day Forecast</span>
+                        <span class="text-sm font-medium text-primary mt-2 flex items-center gap-1">View Details <span
+                                class="material-symbols-outlined text-sm">arrow_forward</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <section class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 md:p-8 shadow-sm h-full">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">history</span>
+                            Recent Searches
+                        </h3>
+                        <button id="clearRecentBtn"
+                            class="text-slate-500 hover:text-primary text-sm font-medium transition-colors">Clear
+                            All</button>
+                    </div>
+                    <div id="recentSearchesList" class="flex flex-col gap-3">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+            </div>
+        </main>
+
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // UI Elements
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            const cityNameEl = document.getElementById('cityName');
+            const currentDateEl = document.getElementById('currentDate');
+            const weatherIconEl = document.getElementById('weatherIcon');
+            const weatherDescEl = document.getElementById('weatherDesc');
+            const currentTempEl = document.getElementById('currentTemp');
+            const currentHumidityEl = document.getElementById('currentHumidity');
+            const currentWindEl = document.getElementById('currentWind');
+            const recentSearchesList = document.getElementById('recentSearchesList');
+            const clearRecentBtn = document.getElementById('clearRecentBtn');
+
+            // Search debounce timer
+            let searchTimeout;
+
+            // Initialize Home Page
+            async function initHome() {
+                currentDateEl.textContent = app.formatDate(new Date(), true);
+                await updateWeatherUI(app.currentCity);
+                renderRecentSearches();
+            }
+
+            async function updateWeatherUI(city) {
+                cityNameEl.textContent = city.name;
+                const data = await app.getWeatherData(city.latitude, city.longitude);
+
+                if (data && data.current) {
+                    const current = data.current;
+                    const visual = app.getWeatherVisuals(current.weather_code);
+
+                    currentTempEl.textContent = Math.round(current.temperature_2m);
+                    weatherIconEl.textContent = visual.icon;
+                    weatherDescEl.textContent = visual.desc;
+                    currentHumidityEl.textContent = `${current.relative_humidity_2m}%`;
+                    currentWindEl.textContent = `${current.wind_speed_10m} km/h`;
+
+                    // Trigger animation
+                    app.updateWeatherAnimation(current.weather_code, 'weatherMainCard', 'weatherIcon');
+                }
+            }
+
+            // Search Logic
+            const locationBtn = document.getElementById('locationBtn');
+            const locationBtnFull = document.getElementById('locationBtnFull');
+
+            const handleLocationClick = async (btn) => {
+                const icon = btn.querySelector('.material-symbols-outlined') || btn;
+                icon.classList.add('animate-spin');
+                try {
+                    const coords = await app.getUserLocation();
+                    const city = await app.reverseGeocode(coords.latitude, coords.longitude);
+                    app.saveCity(city);
+                    await updateWeatherUI(city);
+                    renderRecentSearches();
+                } catch (error) {
+                    console.error('Location error:', error);
+                    alert('Unable to retrieve your location. Please check your browser permissions.');
+                } finally {
+                    icon.classList.remove('animate-spin');
+                }
+            };
+
+            if (locationBtn) {
+                locationBtn.addEventListener('click', () => handleLocationClick(locationBtn));
+            }
+            if (locationBtnFull) {
+                locationBtnFull.addEventListener('click', () => handleLocationClick(locationBtnFull));
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                clearTimeout(searchTimeout);
+                const query = e.target.value.trim();
+
+                if (query.length < 3) {
+                    searchResults.style.display = 'none';
+                    return;
+                }
+
+                searchTimeout = setTimeout(async () => {
+                    const results = await app.searchCity(query);
+                    renderSearchResults(results);
+                }, 500); // 500ms debounce
+            });
+
+            // Hide search results when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                    searchResults.style.display = 'none';
+                }
+            });
+
+            function renderSearchResults(results) {
+                if (results.length === 0) {
+                    searchResults.innerHTML = '<div class="p-4 text-sm text-slate-500 text-center border-b border-slate-200 dark:border-slate-800">No results found</div>';
+                    searchResults.style.display = 'block';
+                    return;
+                }
+
+                searchResults.innerHTML = results.map(city => `
+                <div class="search-result-item flex flex-col" data-lat="${city.latitude}" data-lon="${city.longitude}" data-name="${city.name}">
+                    <span class="font-medium text-slate-900 dark:text-slate-100">${city.name}</span>
+                    <span class="text-xs text-slate-500">${city.admin1 ? city.admin1 + ', ' : ''}${city.country}</span>
+                </div>
+            `).join('');
+
+                searchResults.style.display = 'block';
+
+                // Add click handlers
+                searchResults.querySelectorAll('.search-result-item').forEach(item => {
+                    item.addEventListener('click', async () => {
+                        const selectedCity = {
+                            name: item.dataset.name,
+                            latitude: parseFloat(item.dataset.lat),
+                            longitude: parseFloat(item.dataset.lon)
+                        };
+
+                        app.saveCity(selectedCity);
+                        window.location.href = 'forecast.html';
+                    });
+                });
+            }
+
+            // Recent Searches
+            async function renderRecentSearches() {
+                const searches = app.recentSearches;
+
+                if (searches.length === 0) {
+                    recentSearchesList.innerHTML = '<p class="text-slate-500 text-center py-4 text-sm">No recent searches</p>';
+                    return;
+                }
+
+                recentSearchesList.innerHTML = ''; // Clear loading state
+
+                for (const city of searches) {
+                    // Fetch basic weather for the recent search item to show temp/icon
+                    const data = await app.getWeatherData(city.latitude, city.longitude);
+                    let temp = '--°';
+                    let desc = 'Loading';
+                    let icon = 'cloud';
+
+                    if (data && data.current) {
+                        temp = `${Math.round(data.current.temperature_2m)}°`;
+                        const visual = app.getWeatherVisuals(data.current.weather_code);
+                        desc = visual.desc;
+                        icon = visual.icon;
+                    }
+
+                    const itemHtml = `
+                    <div class="flex items-center justify-between p-4 bg-slate-100 dark:bg-slate-800/50 rounded-2xl cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors" data-lat="${city.latitude}" data-lon="${city.longitude}" data-name="${city.name}">
+                        <div class="flex items-center gap-4">
+                            <span class="material-symbols-outlined text-primary">${icon}</span>
+                            <div>
+                                <p class="font-semibold text-slate-900 dark:text-slate-100">${city.name}</p>
+                                <p class="text-xs text-slate-500 truncate max-w-[120px]">${desc}</p>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-slate-900 dark:text-slate-100">${temp}</p>
+                        </div>
+                    </div>
+                `;
+
+                    // Use a wrapper to be able to attach event listener cleanly
+                    const wrapper = document.createElement('div');
+                    wrapper.innerHTML = itemHtml;
+                    const el = wrapper.firstElementChild;
+
+                    el.addEventListener('click', async () => {
+                        const selectedCity = {
+                            name: el.dataset.name,
+                            latitude: parseFloat(el.dataset.lat),
+                            longitude: parseFloat(el.dataset.lon)
+                        };
+                        app.saveCity(selectedCity);
+                        window.location.href = 'forecast.html';
+                    });
+
+                    recentSearchesList.appendChild(el);
+                }
+            }
+
+            clearRecentBtn.addEventListener('click', () => {
+                app.clearRecentSearches();
+                renderRecentSearches();
+            });
+
+            initHome();
+            if (window.location.hash === '#search') {
+                setTimeout(() => searchInput.focus(), 100);
+            }
+
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            function updateThemeUI() {
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIcon.textContent = 'light_mode';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = 'dark_mode';
+                    themeText.textContent = 'Dark Mode';
+                }
+            }
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('weather_theme', isDark ? 'dark' : 'light');
+                    updateThemeUI();
+                });
+
+                // Init theme from local storage if exists
+                const savedTheme = localStorage.getItem('weather_theme');
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark'); // default
+                }
+                updateThemeUI();
+            }
+        });
+    </script>
+</body>
+
+</html>

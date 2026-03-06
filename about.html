@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>About Us - WeatherWeb</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        // Init theme early to prevent flash
+        if (localStorage.getItem('weather_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen flex">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white/50 dark:bg-background-dark/50 hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-primary flex items-center gap-2 mb-10 cursor-pointer"
+                onclick="window.location.href='index.html'">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+                WeatherWeb
+            </h1>
+            <nav class="flex flex-col gap-2">
+                <a href="index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+                    Home
+                </a>
+                <a href="forecast.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    Forecast
+                </a>
+                <button id="themeToggleBtn"
+                    class="flex items-center gap-4 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors text-left cursor-pointer">
+                    <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+                    <span id="themeText">Light Mode</span>
+                </button>
+                <a href="about.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors">
+                    <span class="material-symbols-outlined">info</span>
+                    About Us
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto w-full">
+        <!-- Web Header -->
+        <header
+            class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+            <h1 class="md:hidden text-2xl font-bold text-primary flex items-center gap-2">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+                WeatherWeb
+            </h1>
+
+            <div class="flex items-center gap-4 flex-1 w-full mx-auto order-3 md:order-none justify-end">
+                <!-- Header empty space for alignment -->
+            </div>
+
+            <div class="md:hidden flex items-center order-2">
+                <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 cursor-pointer text-3xl">menu</span>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-4xl mx-auto px-4 md:px-6 py-12">
+            <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-8 md:p-12">
+                <div class="text-center mb-10">
+                    <span class="material-symbols-outlined text-[80px] text-primary mb-4"
+                        style="font-variation-settings: 'FILL' 1">cloud</span>
+                    <h2 class="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-4">About WeatherWeb
+                    </h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">Your reliable companion for
+                        accurate, real-time weather forecasts and conditions everywhere around the globe.</p>
+                </div>
+
+                <div class="space-y-8">
+                    <section class="pb-8">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">target</span>
+                            Our Mission
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                            To provide beautiful, intuitive, and accurate weather data accessible to everyone. We
+                            believe checking the weather should be as refreshing as a clear blue sky, which is why we
+                            focus heavily on user experience and reliable data sourcing.
+                        </p>
+                    </section>
+
+                    <section class="pb-8">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-200 mb-4 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">data_usage</span>
+                            Where we get our data?
+                        </h3>
+                        <p class="text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
+                            WeatherWeb is proudly powered by the <strong>Open-Meteo API</strong>. Open-Meteo provides
+                            free, high-performance weather forecast APIs, blending data from numerous national weather
+                            services across the globe to deliver highly precise weather metrics right to your screen.
+                        </p>
+                    </section>
+
+                    <section class="grid md:grid-cols-3 gap-6 pt-4">
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl text-center">
+                            <span class="material-symbols-outlined text-3xl text-orange-500 mb-2">speed</span>
+                            <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Fast</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Optimized for rapid data delivery.</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl text-center">
+                            <span class="material-symbols-outlined text-3xl text-blue-500 mb-2">public</span>
+                            <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Global</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Accurate forecasts worldwide.</p>
+                        </div>
+                        <div class="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl text-center">
+                            <span class="material-symbols-outlined text-3xl text-teal-500 mb-2">design_services</span>
+                            <h4 class="font-bold text-slate-900 dark:text-slate-100 mb-2">Beautiful</h4>
+                            <p class="text-sm text-slate-500 dark:text-slate-400">Crafted with modern aesthetics.</p>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            function updateThemeUI() {
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIcon.textContent = 'light_mode';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = 'dark_mode';
+                    themeText.textContent = 'Dark Mode';
+                }
+            }
+
+            if (themeToggleBtn) {
+                themeToggleBtn.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('weather_theme', isDark ? 'dark' : 'light');
+                    updateThemeUI();
+                });
+
+                // Init theme from local storage if exists
+                const savedTheme = localStorage.getItem('weather_theme');
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark'); // default
+                }
+                updateThemeUI();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>5-Day Forecast Details</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        // Init theme early to prevent flash
+        if (localStorage.getItem('weather_theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased min-h-screen flex">
+    <!-- Sidebar -->
+    <aside
+        class="w-64 bg-white/50 dark:bg-background-dark/50 hidden md:flex flex-col flex-shrink-0 sticky top-0 h-screen overflow-y-auto">
+        <div class="p-6">
+            <h1 class="text-2xl font-bold text-primary flex items-center gap-2 mb-10 cursor-pointer"
+                onclick="window.location.href='index.html'">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+                WeatherWeb
+            </h1>
+            <nav class="flex flex-col gap-2">
+                <a href="index.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+                    Home
+                </a>
+                <a href="forecast.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl bg-primary/10 text-primary font-semibold transition-colors">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    Forecast
+                </a>
+                <button id="themeToggleBtn"
+                    class="flex items-center gap-4 w-full px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors text-left cursor-pointer">
+                    <span class="material-symbols-outlined" id="themeIcon">light_mode</span>
+                    <span id="themeText">Light Mode</span>
+                </button>
+                <a href="about.html"
+                    class="flex items-center gap-4 px-4 py-3 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100 font-medium transition-colors">
+                    <span class="material-symbols-outlined">info</span>
+                    About Us
+                </a>
+            </nav>
+        </div>
+    </aside>
+
+
+    <!-- Main Content Area -->
+    <div class="flex-1 flex flex-col min-w-0 h-screen overflow-y-auto w-full">
+        <!-- Web Header -->
+        <header
+            class="sticky top-0 z-50 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 py-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-4">
+            <!-- Mobile Logo -->
+            <h1 class="md:hidden text-2xl font-bold text-primary flex items-center gap-2 cursor-pointer"
+                onclick="window.location.href='index.html'">
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">cloud</span>
+            </h1>
+
+            <div class="flex items-center gap-4 flex-1 w-full mx-auto order-3 md:order-none justify-end">
+                <button id="locationBtn"
+                    class="flex items-center gap-2 bg-primary/10 hover:bg-primary/20 transition-colors px-4 py-2 rounded-full text-primary font-medium whitespace-nowrap">
+                    <span class="material-symbols-outlined">my_location</span>
+                    <span class="hidden sm:inline">Use My Location</span>
+                </button>
+                <button onclick="window.location.href='index.html#search'"
+                    class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors px-4 py-2 rounded-full text-slate-600 dark:text-slate-300 font-medium whitespace-nowrap">
+                    <span class="material-symbols-outlined">search</span>
+                    <span class="hidden sm:inline">Search Location</span>
+                </button>
+            </div>
+            <div class="md:hidden flex items-center order-2">
+                <span
+                    class="material-symbols-outlined text-slate-600 dark:text-slate-300 cursor-pointer text-3xl">menu</span>
+            </div>
+        </header>
+
+        <main class="flex-1 w-full max-w-6xl mx-auto px-4 md:px-6 py-8">
+            <div class="flex items-center gap-4 mb-8">
+                <div onclick="window.location.href='index.html'"
+                    class="flex size-10 items-center justify-center rounded-full hover:bg-white dark:hover:bg-slate-800 cursor-pointer shadow-sm bg-slate-50 dark:bg-slate-800/50 transition-colors">
+                    <span class="material-symbols-outlined text-slate-900 dark:text-slate-100">arrow_back</span>
+                </div>
+                <div>
+                    <h2 id="cityName" class="text-3xl font-bold text-slate-900 dark:text-slate-100">Loading...</h2>
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Weather Forecast & Details</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left Column: Today & Details -->
+                <div class="lg:col-span-1 space-y-8">
+                    <!-- Today Summary Card -->
+                    <div id="todayMainCard"
+                        class="overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-blue-600 p-8 text-white shadow-lg shadow-primary/20 relative">
+                        <div class="relative z-10 flex flex-col h-full min-h-[300px]">
+                            <div class="flex justify-between items-start mb-8">
+                                <div>
+                                    <p class="text-sm font-semibold opacity-80 uppercase tracking-widest mb-1">Today</p>
+                                    <p id="todayDesc" class="text-xl font-medium">Loading...</p>
+                                </div>
+                                <span id="todayIcon"
+                                    class="material-symbols-outlined text-[80px] opacity-100 drop-shadow-md"
+                                    style="font-variation-settings: 'FILL' 1">cloud</span>
+                            </div>
+                            <div class="mt-auto">
+                                <h3 id="todayTemp" class="text-7xl font-bold">--°</h3>
+                                <div
+                                    class="mt-6 flex flex-wrap gap-4 text-sm font-medium opacity-90 bg-white/10 rounded-xl p-4 backdrop-blur-sm">
+                                    <div class="flex flex-col items-center flex-1">
+                                        <span
+                                            class="material-symbols-outlined text-sm mb-1 text-blue-200">arrow_upward</span>
+                                        <span><span id="todayMax">--</span>°</span>
+                                    </div>
+                                    <div class="w-px bg-white/20"></div>
+                                    <div class="flex flex-col items-center flex-1">
+                                        <span
+                                            class="material-symbols-outlined text-sm mb-1 text-blue-200">arrow_downward</span>
+                                        <span><span id="todayMin">--</span>°</span>
+                                    </div>
+                                    <div class="w-px bg-white/20"></div>
+                                    <div class="flex flex-col items-center flex-1">
+                                        <span
+                                            class="material-symbols-outlined text-sm mb-1 text-blue-200">water_drop</span>
+                                        <span><span id="todayHumidity">--</span>%</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Metrics -->
+                    <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 md:p-8 shadow-sm">
+                        <h3 class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
+                            <span class="material-symbols-outlined text-primary">analytics</span>
+                            Current Details
+                        </h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined text-sm text-orange-500">wb_sunny</span>
+                                    <p class="text-xs font-semibold uppercase tracking-wider">UV Index</p>
+                                </div>
+                                <div class="mt-2 text-center md:text-left">
+                                    <p id="uvValue" class="text-2xl font-bold text-slate-900 dark:text-slate-100">--</p>
+                                    <div
+                                        class="mt-3 h-1.5 w-full bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                                        <div id="uvBar" class="h-full bg-orange-500 rounded-full w-[0%]"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined text-sm text-blue-500">water_drop</span>
+                                    <p class="text-xs font-semibold uppercase tracking-wider">Humidity</p>
+                                </div>
+                                <div class="mt-2 text-center md:text-left">
+                                    <p id="humidityValue" class="text-2xl font-bold text-slate-900 dark:text-slate-100">
+                                        --%
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined text-sm text-teal-500">air</span>
+                                    <p class="text-xs font-semibold uppercase tracking-wider">Wind</p>
+                                </div>
+                                <div class="mt-2 text-center md:text-left">
+                                    <p id="windValue" class="text-2xl font-bold text-slate-900 dark:text-slate-100">--
+                                        km/h
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl flex flex-col gap-2">
+                                <div class="flex items-center gap-2 text-slate-500 dark:text-slate-400">
+                                    <span class="material-symbols-outlined text-sm text-indigo-500">compress</span>
+                                    <p class="text-xs font-semibold uppercase tracking-wider">Pressure</p>
+                                </div>
+                                <div class="mt-2 text-center md:text-left">
+                                    <p id="pressureValue" class="text-xl font-bold text-slate-900 dark:text-slate-100">
+                                        --
+                                        hPa</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Forecast List -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white dark:bg-slate-800/80 rounded-3xl p-6 md:p-8 shadow-sm h-full">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-slate-900 dark:text-slate-100 text-2xl font-bold tracking-tight">5-Day
+                                Forecast
+                            </h2>
+                            <span
+                                class="material-symbols-outlined text-primary bg-blue-50 dark:bg-blue-900/30 p-2 rounded-full">calendar_month</span>
+                        </div>
+                        <div id="forecastList" class="flex flex-col gap-4">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // UI Elements
+            const cityNameEl = document.getElementById('cityName');
+
+            // Today Elements
+            const todayTempEl = document.getElementById('todayTemp');
+            const todayDescEl = document.getElementById('todayDesc');
+            const todayIconEl = document.getElementById('todayIcon');
+            const todayMaxEl = document.getElementById('todayMax');
+            const todayMinEl = document.getElementById('todayMin');
+            const todayHumidityEl = document.getElementById('todayHumidity');
+
+            // Forecast & Details Elements
+            const forecastListEl = document.getElementById('forecastList');
+            const uvValueEl = document.getElementById('uvValue');
+            const uvBarEl = document.getElementById('uvBar');
+            const humidityValueEl = document.getElementById('humidityValue');
+            const windValueEl = document.getElementById('windValue');
+            const pressureValueEl = document.getElementById('pressureValue');
+
+
+
+            // Theme Toggle Logic
+            const themeToggleBtn = document.getElementById('themeToggleBtn');
+            const themeIcon = document.getElementById('themeIcon');
+            const themeText = document.getElementById('themeText');
+
+            function updateThemeUI() {
+                if (document.documentElement.classList.contains('dark')) {
+                    themeIcon.textContent = 'light_mode';
+                    themeText.textContent = 'Light Mode';
+                } else {
+                    themeIcon.textContent = 'dark_mode';
+                    themeText.textContent = 'Dark Mode';
+                }
+            }
+
+            if (themeToggleBtn) {
+                // ... (rest of theme logic remains original)
+                themeToggleBtn.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    const isDark = document.documentElement.classList.contains('dark');
+                    localStorage.setItem('weather_theme', isDark ? 'dark' : 'light');
+                    updateThemeUI();
+                });
+
+                // Init theme from local storage if exists
+                const savedTheme = localStorage.getItem('weather_theme');
+                if (savedTheme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                } else {
+                    document.documentElement.classList.add('dark'); // default
+                }
+                updateThemeUI();
+            }
+
+            // Location Logic
+            const locationBtn = document.getElementById('locationBtn');
+            if (locationBtn) {
+                locationBtn.addEventListener('click', async () => {
+                    const icon = locationBtn.querySelector('.material-symbols-outlined');
+                    icon.classList.add('animate-spin');
+                    try {
+                        const coords = await app.getUserLocation();
+                        const city = await app.reverseGeocode(coords.latitude, coords.longitude);
+                        app.saveCity(city);
+                        cityNameEl.textContent = city.name;
+                        const weatherData = await app.getWeatherData(city.latitude, city.longitude);
+                        if (weatherData) {
+                            renderTodayCard(weatherData);
+                            renderForecastList(weatherData);
+                            renderDetails(weatherData);
+                        }
+                    } catch (error) {
+                        console.error('Location error:', error);
+                        alert('Unable to retrieve your location. Please check your browser permissions.');
+                    } finally {
+                        icon.classList.remove('animate-spin');
+                    }
+                });
+            }
+
+            async function initForecast() {
+                const city = app.currentCity;
+                cityNameEl.textContent = city.name;
+
+                const data = await app.getWeatherData(city.latitude, city.longitude);
+                if (!data) return;
+
+                renderTodayCard(data);
+                renderForecastList(data);
+                renderDetails(data);
+            }
+
+            function renderTodayCard(data) {
+                const current = data.current;
+                const daily = data.daily;
+                const visual = app.getWeatherVisuals(current.weather_code);
+
+                todayTempEl.textContent = `${Math.round(current.temperature_2m)}°`;
+                todayDescEl.textContent = visual.desc;
+                todayIconEl.textContent = visual.icon;
+
+                todayMaxEl.textContent = Math.round(daily.temperature_2m_max[0]);
+                todayMinEl.textContent = Math.round(daily.temperature_2m_min[0]);
+                todayHumidityEl.textContent = current.relative_humidity_2m;
+
+                // Trigger animation
+                app.updateWeatherAnimation(current.weather_code, 'todayMainCard', 'todayIcon');
+            }
+
+            function renderForecastList(data) {
+                const daily = data.daily;
+                let html = '';
+
+                // Open-Meteo provides 7 days by default, we'll take next 5 days
+                for (let i = 0; i < 5; i++) {
+                    const date = daily.time[i];
+                    const maxTemp = Math.round(daily.temperature_2m_max[i]);
+                    const minTemp = Math.round(daily.temperature_2m_min[i]);
+                    const visual = app.getWeatherVisuals(daily.weather_code[i]);
+
+                    let dayName = i === 0 ? 'Today' : app.formatDate(date);
+
+                    html += `
+                    <div class="flex items-center gap-4 bg-slate-50 dark:bg-slate-900/50 px-6 min-h-[72px] py-4 justify-between rounded-2xl hover:shadow-md transition-all hover:-translate-y-0.5">
+                        <div class="flex items-center gap-4 w-1/3">
+                            <p class="text-slate-800 dark:text-slate-200 text-lg font-semibold">${dayName}</p>
+                        </div>
+                        <div class="flex items-center justify-center gap-3 flex-1">
+                            <span class="material-symbols-outlined text-2xl ${visual.icon === 'sunny' ? 'text-orange-500' : (visual.icon === 'rainy' ? 'text-blue-500' : 'text-slate-400')}" ${visual.icon === 'sunny' || visual.icon === 'rainy' ? 'style="font-variation-settings: \'FILL\' 1"' : ''}>${visual.icon}</span>
+                            <span class="text-slate-600 dark:text-slate-400 font-medium">${visual.desc}</span>
+                        </div>
+                        <div class="shrink-0 text-right w-1/3">
+                            <p class="text-slate-900 dark:text-slate-100 text-xl font-bold">${maxTemp}° <span class="text-slate-400 dark:text-slate-500 font-medium ml-2">${minTemp}°</span></p>
+                        </div>
+                    </div>
+                `;
+                }
+
+                forecastListEl.innerHTML = html;
+            }
+
+            function renderDetails(data) {
+                const current = data.current;
+                const uvMax = Math.round(data.daily.uv_index_max[0]);
+
+                let uvLabel = 'Low';
+                if (uvMax >= 3) uvLabel = 'Moderate';
+                if (uvMax >= 6) uvLabel = 'High';
+                if (uvMax >= 8) uvLabel = 'Very High';
+                if (uvMax >= 11) uvLabel = 'Extreme';
+
+                uvValueEl.textContent = `${uvMax} ${uvLabel}`;
+                // Max UV is usually around 11
+                const uvPercent = Math.min(100, Math.max(0, (uvMax / 11) * 100));
+                uvBarEl.style.width = `${uvPercent}%`;
+
+                // Re-using humidity instead of visibility since Open-Meteo doesn't provide visibility by default
+                humidityValueEl.textContent = `${current.relative_humidity_2m}%`;
+                windValueEl.textContent = `${current.wind_speed_10m} km/h`;
+                pressureValueEl.textContent = `${Math.round(current.surface_pressure)} hPa`;
+            }
+
+            initForecast();
+        });
+    </script>
+</body>
+
+</html>

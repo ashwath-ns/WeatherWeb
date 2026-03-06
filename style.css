@@ -1,0 +1,105 @@
+/* style.css */
+body {
+    font-family: 'Inter', sans-serif;
+    min-height: max(884px, 100dvh);
+}
+
+.weather-gradient {
+    background: linear-gradient(180deg, #1e293b 0%, #101922 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Rain Animation */
+.rain-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.drop {
+    position: absolute;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.6) 100%);
+    width: 2px;
+    height: 50px;
+    top: -50px;
+    animation: fall linear infinite;
+}
+
+@keyframes fall {
+    to {
+        transform: translateY(500px);
+    }
+}
+
+/* Cloud Animation */
+.animate-cloud {
+    animation: drift 10s linear infinite alternate;
+}
+
+@keyframes drift {
+    from {
+        transform: translateX(-10px);
+    }
+
+    to {
+        transform: translateX(10px);
+    }
+}
+
+/* Sun Glow Animation */
+.animate-sun {
+    animation: pulse-glow 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        filter: drop-shadow(0 0 10px rgba(255, 165, 0, 0.4));
+    }
+
+    50% {
+        filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0.8));
+    }
+}
+
+/* Custom Search Dropdown Styles */
+.search-results-container {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    z-index: 50;
+    margin-top: 0.5rem;
+    overflow: hidden;
+    display: none;
+}
+
+.dark .search-results-container {
+    background: #1e293b;
+}
+
+.search-result-item {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background: #f1f5f9;
+}
+
+.dark .search-result-item:hover {
+    background: #0f172a;
+}
