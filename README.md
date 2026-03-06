@@ -10,7 +10,7 @@ A modern weather dashboard that shows real-time weather information, forecasts, 
 📅 5-Day weather forecast
 🕘 Recent search history
 🌙 Light/Dark mode UI
-
+ 
 🛠 Tech Stack
 This project is built using:
 HTML
